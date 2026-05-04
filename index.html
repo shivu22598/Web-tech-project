@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAHAY — Smart Assistive Hand Gesture and You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- macOS Window -->
+<div class="mac-window">
+  <!-- Title Bar -->
+  <div class="mac-titlebar">
+    <div class="mac-dot close"></div>
+    <div class="mac-dot min"></div>
+    <div class="mac-dot max"></div>
+    <div class="mac-title">SAHAY — Smart Assistive Hand Gesture and You</div>
+  </div>
+
+  <!-- App Content -->
+  <div class="mac-content">
+
+    <!-- Header -->
+    <div class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">👁️</div>
+        <div class="logo-text">
+          <h1>SAHAY</h1>
+          <p>Smart Assistive Hand Gesture and You</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <div class="badge" id="modelBadge">
+          <span class="dot"></span> Model Ready
+        </div>
+        <div class="badge" id="camBadge">
+          <span class="dot"></span> Camera
+        </div>
+        <div class="badge" id="backendBadge">
+          <span class="dot"></span> Backend
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="gesture">🖐️ Gesture Detection</button>
+      <button class="tab-btn" data-tab="voice">🎤 Voice → Sign</button>
+      <button class="tab-btn" data-tab="spelling">🔤 Spell & Build</button>
+      <button class="tab-btn" data-tab="train">⚙️ Model & Data</button>
+    </div>
+
+    <!-- ══ TAB: Gesture Detection ══════════════════════ -->
+    <div class="tab-panel active" id="tab-gesture">
+      <div class="grid-2">
+        <!-- Camera Feed -->
+        <div class="card">
+          <div class="card-label"><span></span>Live Camera Feed</div>
+          <div class="cam-wrap">
+            <video id="video" autoplay playsinline muted></video>
+            <div class="cam-overlay" id="camOverlay">
+              <div class="cam-overlay-icon">📷</div>
+              <div>Click Start Camera to begin</div>
+            </div>
+            <div class="cam-badge">
+              <div class="live-dot" id="liveDot"></div>
+              <span id="gestureStatus">Offline</span>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="startCamBtn">▶ Start Camera</button>
+            <button class="btn btn-danger" id="stopCamBtn">■ Stop</button>
+          </div>
+        </div>
+
+        <!-- Detection Output -->
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-label"><span></span>Detected Gesture</div>
+            <div class="output-box highlight" id="gestureBox">
+              <div class="big-label" id="gestureText">—</div>
+              <div>
+                <div id="gestureWord" style="font-size:15px;font-weight:600;color:var(--text)">Waiting...</div>
+                <div class="sub-text" id="gestureConf">Confidence: —</div>
+              </div>
+            </div>
+            <div class="conf-bar-wrap">
+              <div class="conf-bar-label">
+                <span>Confidence</span>
+                <span id="confPct">0%</span>
+              </div>
+              <div class="conf-bar"><div class="conf-fill" id="confFill"></div></div>
+            </div>
+            <div class="top3" id="top3Chips"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-label"><span></span>Speech Output</div>
+            <div class="output-box" id="spokenBox">
+              <span style="font-size:20px">🔊</span>
+              <div>
+                <div id="spokenText" style="font-size:14px;color:var(--text)">Nothing spoken yet</div>
+                <div class="sub-text">Auto-speaks detected gestures</div>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-ghost" id="speakAgainBtn">🔊 Speak Again</button>
+              <button class="btn btn-ghost" id="clearDetectBtn">✕ Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: Voice → Sign ════════════════════════════ -->
+    <div class="tab-panel" id="tab-voice">
+      <div class="grid-2">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-label"><span></span>Voice Input</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div class="card-title" style="margin:0">Speak to Translate</div>
+              <div class="wave-bars">
+                <div class="wave-bar" id="wb1"></div>
+                <div class="wave-bar" id="wb2"></div>
+                <div class="wave-bar" id="wb3"></div>
+                <div class="wave-bar" id="wb4"></div>
+                <div class="wave-bar" id="wb5"></div>
+              </div>
+            </div>
+            <textarea class="voice-input" id="voiceText" placeholder="Your speech will appear here…" readonly></textarea>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="startVoiceBtn">🎤 Start Listening</button>
+              <button class="btn btn-danger" id="stopVoiceBtn">■ Stop</button>
+              <button class="btn btn-ghost" id="clearVoiceBtn">✕ Clear</button>
+            </div>
+            <div class="status-strip">
+              <span class="sicon" id="voiceStatusIcon">⚪</span>
+              <span id="voiceStatus">Status: Idle — ready to listen</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-label"><span></span>Manual Text Input</div>
+            <div class="text-input-row">
+              <input type="text" id="manualInput" placeholder="Type a word or phrase..." />
+              <button class="btn btn-primary" id="translateManualBtn">Translate →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label"><span></span>Sign Language Translation</div>
+          <div class="card-title">Gesture Cards</div>
+          <div class="gesture-grid" id="gestureOutput">
+            <div class="empty-msg">No gesture translation yet…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: Spell & Build ═══════════════════════════ -->
+    <div class="tab-panel" id="tab-spelling">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-label"><span></span>Live Gesture Speller</div>
+          <div class="cam-wrap">
+            <video id="video2" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;transform:scaleX(-1);border-radius:var(--radius-sm)"></video>
+            <div class="cam-overlay" id="camOverlay2">
+              <div class="cam-overlay-icon">📷</div>
+              <div>Start camera to spell with gestures</div>
+            </div>
+            <div class="cam-badge">
+              <div class="live-dot" id="liveDot2"></div>
+              <span id="spellerStatus">Offline</span>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="startSpellBtn">▶ Start Speller</button>
+            <button class="btn btn-danger" id="stopSpellBtn">■ Stop</button>
+            <button class="btn btn-ghost" id="clearSpellBtn">✕ Clear Word</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-label"><span></span>Current Gesture</div>
+            <div class="output-box highlight">
+              <div class="big-label" id="spellLetter">—</div>
+              <div>
+                <div id="spellWord" style="font-size:13px;color:var(--muted)">Hold gesture to confirm</div>
+                <div class="sub-text" id="spellConf">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-label"><span></span>Spelled Word</div>
+            <div class="letter-strip" id="letterStrip">
+              <span class="empty-msg">Letters will appear here…</span>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+              <div class="output-box" style="flex:1;font-size:22px;font-family:var(--font-head);color:var(--accent)" id="builtWord">—</div>
+              <button class="btn btn-ghost" id="backspaceBtn">⌫</button>
+              <button class="btn btn-success" id="speakWordBtn">🔊</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: Model & Data ════════════════════════════ -->
+    <div class="tab-panel" id="tab-train">
+      <div class="grid-2">
+        <!-- Model Status -->
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-label"><span></span>ML Model Status</div>
+            <div class="model-stat-grid" id="modelStats">
+              <div class="model-stat">
+                <div class="val" id="statAcc">—</div>
+                <div class="key">ACCURACY %</div>
+              </div>
+              <div class="model-stat">
+                <div class="val" id="statSamples">—</div>
+                <div class="key">SAMPLES</div>
+              </div>
+              <div class="model-stat">
+                <div class="val" id="statClasses">—</div>
+                <div class="key">CLASSES</div>
+              </div>
+            </div>
+            <div class="train-progress" id="trainProgress">
+              <div class="train-fill"></div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-success" id="trainBtn">🚀 Train Model</button>
+              <button class="btn btn-ghost" id="refreshStatusBtn">↻ Refresh</button>
+            </div>
+            <div class="status-strip" id="trainStatus">
+              <span class="sicon">⚙️</span>
+              <span>Click Refresh to load model status</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-label"><span></span>Collect Training Data</div>
+            <div class="text-input-row" style="margin-bottom:10px">
+              <input type="text" id="collectLabel" placeholder="Enter label (e.g. A, B, Hello...)" maxlength="20" />
+              <button class="btn btn-warn" id="collectBtn">● Record</button>
+            </div>
+            <div style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">
+              Point camera at your hand and press <kbd>S</kbd> to save a sample, <kbd>N</kbd> for next label.
+            </div>
+          </div>
+        </div>
+
+        <!-- Dataset Overview -->
+        <div class="card">
+          <div class="card-label"><span></span>Dataset Overview</div>
+          <div class="card-title">Training Data</div>
+          <div class="data-list" id="dataList">
+            <span class="empty-msg">Loading dataset…</span>
+          </div>
+          <div class="divider"></div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--font-mono)">
+            Data is stored as .npy landmark files in <code style="color:var(--accent)">data/</code> folder.
+            Minimum 50 samples per class recommended for best accuracy.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- mac-content -->
+</div><!-- mac-window -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

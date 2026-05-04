@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAHAY — Sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:       #080c14;
+      --surface:  rgba(255,255,255,0.04);
+      --surface2: rgba(255,255,255,0.07);
+      --border:   rgba(255,255,255,0.09);
+      --border2:  rgba(255,255,255,0.14);
+      --accent:   #4fd1c5;
+      --accent2:  #7c6fcd;
+      --accent3:  #f6ad55;
+      --text:     #e8edf5;
+      --muted:    rgba(232,237,245,0.45);
+      --danger:   #fc8181;
+      --success:  #68d391;
+      --font-head:'Syne', sans-serif;
+      --font-body:'DM Sans', sans-serif;
+      --font-mono:'DM Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Background orbs */
+    .bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.2; animation: drift 20s ease-in-out infinite alternate; }
+    .orb-1 { width: 600px; height: 600px; background: var(--accent2); top: -200px; right: -100px; }
+    .orb-2 { width: 500px; height: 500px; background: var(--accent); bottom: -100px; left: -100px; animation-delay: -7s; }
+    .orb-3 { width: 400px; height: 400px; background: var(--accent3); top: 40%; left: 30%; animation-delay: -14s; opacity: 0.08; }
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(40px,30px) scale(1.05); }
+    }
+
+    /* Card */
+    .login-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 16px;
+      animation: fade-up 0.6s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* macOS chrome */
+    .mac-window {
+      background: rgba(18,22,32,0.90);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      box-shadow: 0 8px 60px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+    .mac-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .mac-dot.close { background: #ff5f57; }
+    .mac-dot.min   { background: #ffbd2e; }
+    .mac-dot.max   { background: #28ca42; }
+    .mac-title {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      font-family: var(--font-head); font-size: 12px; font-weight: 600;
+      color: var(--muted); letter-spacing: 0.04em;
+    }
+
+    .login-body { padding: 36px 32px 40px; }
+
+    /* Logo */
+    .logo-group {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 32px; justify-content: center;
+    }
+    .logo-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 24px rgba(79,209,197,0.35);
+    }
+    .logo-text h1 {
+      font-family: var(--font-head); font-size: 28px; font-weight: 800;
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      line-height: 1; letter-spacing: 0.02em;
+    }
+    .logo-text p { font-size: 12px; color: var(--muted); margin-top: 4px; font-family: var(--font-mono); }
+
+    /* Tabs (Sign In / Sign Up) */
+    .auth-tabs {
+      display: flex; gap: 4px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 4px;
+      margin-bottom: 28px;
+    }
+    .auth-tab {
+      flex: 1; padding: 8px; border-radius: 7px;
+      font-size: 13px; font-weight: 600; font-family: var(--font-head);
+      cursor: pointer; border: none; background: transparent;
+      color: var(--muted); transition: all 0.2s;
+    }
+    .auth-tab.active {
+      background: linear-gradient(135deg, rgba(79,209,197,0.15), rgba(124,111,205,0.15));
+      color: var(--text); border: 1px solid rgba(79,209,197,0.25);
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block; font-family: var(--font-mono); font-size: 11px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%; padding: 11px 14px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: var(--font-body); font-size: 14px;
+      color: var(--text); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,209,197,0.1); }
+    input::placeholder { color: var(--muted); }
+
+    /* Password wrapper */
+    .pw-wrap { position: relative; }
+    .pw-toggle {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      font-size: 16px; padding: 4px; transition: color 0.2s;
+    }
+    .pw-toggle:hover { color: var(--text); }
+
+    /* Remember + Forgot */
+    .form-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; font-size: 13px;
+    }
+    .remember { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .remember input[type="checkbox"] { accent-color: var(--accent); }
+    .forgot { color: var(--accent); font-size: 12px; font-family: var(--font-mono); text-decoration: none; }
+    .forgot:hover { text-decoration: underline; }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%; padding: 13px;
+      background: linear-gradient(135deg, rgba(79,209,197,0.25), rgba(124,111,205,0.25));
+      border: 1px solid rgba(79,209,197,0.4);
+      border-radius: 10px; color: var(--accent);
+      font-family: var(--font-head); font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em;
+    }
+    .btn-submit:hover {
+      background: linear-gradient(135deg, rgba(79,209,197,0.35), rgba(124,111,205,0.35));
+      box-shadow: 0 4px 24px rgba(79,209,197,0.2);
+      transform: translateY(-1px);
+    }
+    .btn-submit:active { transform: scale(0.98); }
+
+    /* Divider */
+    .or-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 22px 0; font-size: 11px; font-family: var(--font-mono); color: var(--muted);
+    }
+    .or-divider::before, .or-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* Social buttons */
+    .social-btns { display: flex; gap: 10px; }
+    .btn-social {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px; border-radius: 10px;
+      background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--muted); font-family: var(--font-head); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-social:hover { color: var(--text); background: rgba(255,255,255,0.1); transform: translateY(-1px); }
+
+    /* Error / success message */
+    .msg-box {
+      display: none; padding: 10px 14px; border-radius: 8px;
+      font-size: 13px; font-family: var(--font-mono); margin-bottom: 16px;
+    }
+    .msg-box.error { background: rgba(252,129,129,0.1); border: 1px solid rgba(252,129,129,0.3); color: var(--danger); display: flex; }
+    .msg-box.success { background: rgba(104,211,145,0.1); border: 1px solid rgba(104,211,145,0.3); color: var(--success); display: flex; }
+
+    /* Panels */
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; }
+
+    /* Footer note */
+    .login-note { text-align: center; margin-top: 20px; font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+  </style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="login-wrap">
+  <div class="mac-window">
+    <div class="mac-titlebar">
+      <div class="mac-dot close"></div>
+      <div class="mac-dot min"></div>
+      <div class="mac-dot max"></div>
+      <div class="mac-title">Vision — Authentication</div>
+    </div>
+
+    <div class="login-body">
+      <!-- Logo -->
+      <div class="logo-group">
+        <div class="logo-icon">👁️</div>
+        <div class="logo-text">
+          <h1>Vision</h1>
+          <p>Sign Language Interpreter</p>
+        </div>
+      </div>
+
+      <!-- Auth Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="signinTab" onclick="switchTab('signin')">Sign In</button>
+        <button class="auth-tab" id="signupTab" onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <!-- Message Box -->
+      <div class="msg-box" id="msgBox"></div>
+
+      <!-- ── SIGN IN PANEL ── -->
+      <div class="auth-panel active" id="signinPanel">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" />
+            <button class="pw-toggle" onclick="togglePw('loginPassword', this)">👁</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="remember">
+            <input type="checkbox" id="rememberMe" /> Remember me
+          </label>
+          <a href="#" class="forgot">Forgot password?</a>
+        </div>
+        <button class="btn-submit" onclick="handleSignIn()">Sign In →</button>
+
+        <div class="or-divider">or continue with</div>
+        <div class="social-btns">
+          <button class="btn-social" onclick="socialLogin('google')">🟠 Google</button>
+          <button class="btn-social" onclick="socialLogin('github')">⚫ GitHub</button>
+        </div>
+      </div>
+
+      <!-- ── SIGN UP PANEL ── -->
+      <div class="auth-panel" id="signupPanel">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="Your name" autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="signupPassword" placeholder="Min 8 characters" autocomplete="new-password" />
+            <button class="pw-toggle" onclick="togglePw('signupPassword', this)">👁</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="signupConfirm" placeholder="Repeat password" autocomplete="new-password" />
+            <button class="pw-toggle" onclick="togglePw('signupConfirm', this)">👁</button>
+          </div>
+        </div>
+        <button class="btn-submit" onclick="handleSignUp()">Create Account →</button>
+      </div>
+
+    </div><!-- login-body -->
+  </div><!-- mac-window -->
+  <div class="login-note">Vision v1.0 · Powered by MediaPipe + Flask</div>
+</div>
+
+<script>
+  const BACKEND = "http://localhost:5050";
+
+  function switchTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(tab + 'Tab').classList.add('active');
+    document.getElementById(tab + 'Panel').classList.add('active');
+    hideMsg();
+  }
+
+  function showMsg(text, type = 'error') {
+    const box = document.getElementById('msgBox');
+    box.textContent = (type === 'error' ? '⚠️ ' : '✅ ') + text;
+    box.className = 'msg-box ' + type;
+  }
+  function hideMsg() {
+    document.getElementById('msgBox').className = 'msg-box';
+  }
+
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+    else { inp.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  async function handleSignIn() {
+    const email    = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) return showMsg('Please fill in all fields.');
+    try {
+      const res  = await fetch(`${BACKEND}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem('vision_token', data.token);
+        localStorage.setItem('vision_user',  JSON.stringify(data.user));
+        showMsg('Login successful! Redirecting…', 'success');
+        setTimeout(() => window.location.href = 'index.html', 1000);
+      } else {
+        showMsg(data.error || 'Invalid credentials.');
+      }
+    } catch {
+      // Demo mode — bypass backend if not running
+      showMsg('Backend offline. Demo login…', 'success');
+      localStorage.setItem('vision_token', 'demo-token');
+      localStorage.setItem('vision_user', JSON.stringify({ name: 'Demo User', email }));
+      setTimeout(() => window.location.href = 'index.html', 1000);
+    }
+  }
+
+  async function handleSignUp() {
+    const name     = document.getElementById('signupName').value.trim();
+    const email    = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirm  = document.getElementById('signupConfirm').value;
+    if (!name || !email || !password) return showMsg('Please fill in all fields.');
+    if (password !== confirm) return showMsg('Passwords do not match.');
+    if (password.length < 8) return showMsg('Password must be at least 8 characters.');
+    try {
+      const res  = await fetch(`${BACKEND}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showMsg('Account created! Please sign in.', 'success');
+        setTimeout(() => switchTab('signin'), 1500);
+      } else {
+        showMsg(data.error || 'Registration failed.');
+      }
+    } catch {
+      showMsg('Backend offline. Using demo mode.', 'success');
+      setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+    }
+  }
+
+  function socialLogin(provider) {
+    showMsg(`${provider} OAuth not yet wired up. Use email login.`);
+  }
+
+  // If already logged in, skip login
+  if (localStorage.getItem('vision_token')) {
+    window.location.href = 'index.html';
+  }
+
+  // Enter key support
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const active = document.querySelector('.auth-panel.active').id;
+      if (active === 'signinPanel') handleSignIn();
+      else handleSignUp();
+    }
+  });
+</script>
+</body>
+</html>
